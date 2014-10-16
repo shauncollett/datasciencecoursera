@@ -45,5 +45,5 @@ complete <- function(directory, id = 1:332) {
     a <- aggregate(cbind(sulfate, nitrate) ~ ID, data=dataset, FUN="length",
                    na.action = na.omit)
     names(a) <- c("id", "nobs")
-    a[order(id), c("id", "nobs")]
+    na.omit(a[order(id), c("id", "nobs")])
 }

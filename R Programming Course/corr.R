@@ -10,22 +10,31 @@
 corr <- function(directory, threshold = 0) {
     # use complete function to get number of cases per monitor
     # remove 1:3 when productionalizing the function
-    #cases <- complete(directory, 1:3) #debugging
+    #cases <- complete(directory, 1:5) #debugging
     cases <- complete(directory)
     # filter out the monitors that fall below the given threshold
     cases <- cases[cases$nobs > threshold, ]
+    #print(cases)
     # get polluntants data set
-    pollutants <- getPollutants(directory, as.vector(cases[, "id"]))
-    #pollutants #debugging
-    #names(pollutants) #debugging
-    
-    for(i in 1:length(cases)) {
-        id <- cases[i, "id"]
-        #print(id)
-        cases[i, "corr"] <- cor(pollutants[pollutants$ID == id, "sulfate"], 
-            pollutants[pollutants$ID == id, "nitrate"])
+    if(nrow(cases) > 0) {
+        pollutants <- getPollutants(directory, as.vector(cases[, "id"]))
+        #pollutants[pollutants$ID == 4, ] #debugging
+        #names(pollutants) #debugging
+        #print(nrow(cases)) #debugging
+        for(i in 1:nrow(cases)) {
+            id <- cases[i, "id"]
+            #print(id) #debugging
+            cases[i, "corr"] <- cor(pollutants[pollutants$ID == id, "sulfate"], 
+                pollutants[pollutants$ID == id, "nitrate"])
+            #print(cases[i, "corr"]) #debugging
+        }
+        # clear missing values
+        result <- na.omit(as.vector(cases[,"corr"]))
     }
-    cases[,"corr"]
+    else {
+        result <- numeric(length = 0)
+    }
+    result
 }
 
 getPollutants <- function(directory, id = 1:332) {
