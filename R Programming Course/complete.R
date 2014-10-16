@@ -42,6 +42,7 @@ complete <- function(directory, id = 1:332) {
     }
     #nrow(dataset) #debugging
     
+    dataset <- na.omit(dataset)
     a <- aggregate(cbind(sulfate, nitrate) ~ ID, data=dataset, FUN="length",
                    na.action = na.omit)
     names(a) <- c("id", "nobs")
