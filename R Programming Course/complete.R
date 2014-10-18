@@ -35,7 +35,7 @@ complete <- function(directory, id = 1:332) {
             else {
                 # if the merged dataset does exist, append to it
                 temp_dataset <- read.csv(file_path, header=TRUE)
-                dataset<-rbind(dataset, temp_dataset)
+                dataset <- rbind(dataset, temp_dataset)
                 rm(temp_dataset)
             }
         }
@@ -46,5 +46,16 @@ complete <- function(directory, id = 1:332) {
     a <- aggregate(cbind(sulfate, nitrate) ~ ID, data=dataset, FUN="length",
                    na.action = na.omit)
     names(a) <- c("id", "nobs")
-    na.omit(a[order(id), c("id", "nobs")])
+    b = data.frame()
+    # loop through dataset to make sure all IDs are accounted for
+    for (i in id) {
+        if (nrow(a[a$id == i,]) == 0) {
+            b <- rbind(b, c(i, 0))
+        }
+        else {
+            b <- rbind(b, c(i, a[a$id == i, "nobs"]))
+        }
+    }
+    names(b) <- c("id", "nobs")
+    b
 }
